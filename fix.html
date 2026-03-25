@@ -138,7 +138,7 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
 
 <div class="header">
   <h1>📚 제일풍경채더숲 독서실</h1>
-  <div class="sub">3개월 정기권 좌석 등록 명부</div>
+  <div class="sub">3개월 정기권 등록 현황</div>
   <div class="quarter-grid" id="quarterGrid"></div>
 </div>
 
@@ -154,10 +154,10 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
   등록 삭제는 이용자가 직접 불가하며, <b>관리사무소에 문의</b>하셔야 합니다.
 </div>
 
-<!-- 좌석 현황 -->
+<!-- 이번 분기 등록 수 -->
 <div class="card">
   <div class="card-head">
-    <h2>🪑 좌석 현황</h2>
+    <h2>🪑 이번 분기 등록 수</h2>
     <div class="count-wrap">
       <div class="count-text" id="countText">0 / 29명</div>
       <div class="count-bar"><div class="count-fill" id="countFill" style="width:0%"></div></div>
@@ -172,9 +172,9 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
   </div>
 </div>
 
-<!-- 등록 명부 -->
+<!-- 등록 현황 -->
 <div class="card">
-  <div class="card-head"><h2>📋 현재 등록 명부</h2></div>
+  <div class="card-head"><h2>📋 등록 현황</h2></div>
   <div class="card-body">
     <div id="rosterList"><div class="roster-empty">등록된 이용자가 없습니다.</div></div>
   </div>
@@ -187,7 +187,7 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
     <div id="statusBanner" class="status-banner s-open">✅ 등록 가능 — 관리사무소에서 코드를 받은 후 등록해 주세요</div>
     <div class="form-group">
       <label class="form-label" for="iName">이름 또는 닉네임</label>
-      <input class="form-input" type="text" id="iName" placeholder="예: 홍길동" maxlength="10" autocomplete="off">
+      <input class="form-input" type="text" id="iName" placeholder="예: 길동" maxlength="10" autocomplete="off">
     </div>
     <div class="form-group">
       <label class="form-label" for="iCode">
