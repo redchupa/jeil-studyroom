@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제일풍경채더숲 독서실 — 정기 좌석 등록</title>
+<style>
+:root {
+  --blue-dark : #1a2e5a;
+  --blue-mid  : #2c5282;
+  --gold      : #c9a227;
+  --red       : #c53030;
+  --red-light : #fff5f5;
+  --green     : #276749;
+  --green-light:#f0fff4;
+  --gray      : #718096;
+  --border    : #e2e8f0;
+  --bg        : #f0f4f8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);min-height:100vh;padding-bottom:48px}
+
+.header{background:linear-gradient(135deg,var(--blue-dark),var(--blue-mid));color:#fff;padding:24px 20px 18px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.header h1{font-size:1.35rem;font-weight:700;margin-bottom:4px}
+.header .sub{font-size:.78rem;opacity:.8;margin-bottom:10px}
+.period-badge{display:inline-block;background:rgba(255,255,255,.18);border-radius:20px;padding:5px 18px;font-size:.82rem;font-weight:600}
+.period-badge .label{opacity:.75;margin-right:4px}
+
+.nav-bar{display:flex;gap:0;margin:14px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.nav-btn{flex:1;padding:11px;font-size:.82rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .2s}
+.nav-btn.current{background:var(--blue-dark);color:#fff}
+.nav-btn.other{background:#e2e8f0;color:var(--gray)}
+.nav-btn.other:hover{background:#cbd5e0;color:#2d3748}
+
+.notice{background:#fffbeb;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 14px 0;font-size:.76rem;color:#744210;line-height:1.65}
+.notice strong{display:block;margin-bottom:3px;font-size:.8rem}
+
+.card{background:#fff;border-radius:14px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden}
+.card-head{background:var(--blue-dark);color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.card-head h2{font-size:.95rem;font-weight:700}
+.card-body{padding:14px}
+.count-wrap{display:flex;align-items:center;gap:8px}
+.count-text{font-size:.88rem;font-weight:700}
+.count-bar{width:80px;height:7px;background:rgba(255,255,255,.3);border-radius:4px;overflow:hidden}
+.count-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .5s}
+
+/* 29좌석 그리드 */
+.seat-grid{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 0 6px}
+.seat-dot{width:44px;height:44px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:.55rem;font-weight:700;border:2px solid;transition:all .3s}
+.seat-dot.avail{background:var(--green-light);border-color:#68d391;color:var(--green)}
+.seat-dot.taken{background:var(--red-light);border-color:#fc8181;color:var(--red)}
+.seat-legend{display:flex;gap:14px;justify-content:center;margin-top:9px;font-size:.7rem;color:var(--gray)}
+.ldot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:3px;vertical-align:middle}
+
+/* 명부 */
+.roster-empty{text-align:center;color:var(--gray);font-size:.83rem;padding:22px 0}
+.roster-item{display:flex;align-items:center;padding:10px 12px;border-radius:10px;margin-bottom:7px;background:#f7fafc;border:1px solid var(--border)}
+.roster-item:last-child{margin-bottom:0}
+.rnum{width:26px;height:26px;background:var(--blue-dark);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-right:10px}
+.rinfo{flex:1}
+.rname{font-weight:700;font-size:.88rem;color:#2d3748}
+.rdate{font-size:.65rem;color:var(--gray);margin-right:6px;min-width:40px;text-align:right}
+.admin-only-badge{font-size:.62rem;background:#ebf4ff;color:var(--blue-mid);border-radius:4px;padding:2px 6px;font-weight:700;white-space:nowrap}
+
+/* 등록 폼 */
+.status-banner{border-radius:9px;padding:12px 14px;text-align:center;font-size:.82rem;font-weight:700;margin-bottom:12px}
+.s-open{background:var(--green-light);color:var(--green);border:1.5px solid #9ae6b4}
+.s-full{background:var(--red-light);color:var(--red);border:1.5px solid #fc8181}
+.form-group{margin-bottom:10px}
+.form-label{display:block;font-size:.78rem;font-weight:700;color:#4a5568;margin-bottom:5px}
+.form-input{width:100%;border:2px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.88rem;font-family:inherit;color:#2d3748;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--blue-mid)}
+.form-input::placeholder{color:#a0aec0}
+.code-input{letter-spacing:5px;font-weight:700;font-size:1.05rem;text-transform:uppercase;font-family:monospace}
+.code-hint{font-size:.7rem;color:var(--gray);margin-top:4px;line-height:1.5}
+.btn-reg{width:100%;background:linear-gradient(135deg,var(--blue-dark),var(--blue-mid));color:#fff;border:none;border-radius:9px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;margin-top:4px;box-shadow:0 4px 10px rgba(44,82,130,.28)}
+.btn-reg:hover{transform:translateY(-1px)}
+.btn-reg:disabled{background:#a0aec0;box-shadow:none;cursor:not-allowed;transform:none}
+
+/* 모달 */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal{background:#fff;border-radius:16px;padding:28px 22px;width:100%;max-width:340px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.modal h3{font-size:1rem;font-weight:700;color:var(--blue-dark);margin-bottom:8px}
+.modal p{font-size:.78rem;color:var(--gray);line-height:1.6;margin-bottom:14px}
+.reg-done-box{background:linear-gradient(135deg,var(--green),#38a169);border-radius:12px;padding:18px;margin-bottom:14px;color:#fff}
+.reg-done-box .name{font-size:1.2rem;font-weight:800;margin-bottom:4px}
+.reg-done-box .sub{font-size:.75rem;opacity:.85}
+.modal-warn{background:#fffbeb;border:1.5px solid var(--gold);border-radius:8px;padding:10px 12px;font-size:.74rem;color:#744210;line-height:1.6;margin-bottom:14px;text-align:left}
+.modal-warn strong{display:block;margin-bottom:2px}
+.btn-modal-ok{width:100%;background:linear-gradient(135deg,var(--blue-dark),var(--blue-mid));color:#fff;border:none;border-radius:9px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit}
+
+.loading{position:fixed;inset:0;background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;z-index:1100;flex-direction:column;gap:12px}
+.spinner{width:38px;height:38px;border:4px solid var(--border);border-top-color:var(--blue-mid);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ltext{font-size:.82rem;color:var(--gray);font-weight:600}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#2d3748;color:#fff;padding:11px 22px;border-radius:100px;font-size:.82rem;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.22);transition:transform .3s;z-index:1200;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--red)}
+.toast.success{background:var(--green)}
+.footer{text-align:center;color:var(--gray);font-size:.68rem;padding:6px 16px;line-height:1.8}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div class="ltext" id="ltext">명부를 불러오는 중...</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- 등록 완료 모달 -->
+<div class="modal-bg hidden" id="modalRegDone">
+  <div class="modal">
+    <h3>✅ 등록 완료!</h3>
+    <div class="reg-done-box">
+      <div class="name" id="regDoneName">-</div>
+      <div class="sub" id="regDoneTime">-</div>
+    </div>
+    <div class="modal-warn">
+      <strong>⚠ 삭제 안내</strong>
+      정기 좌석 등록은 <b>이용자가 직접 삭제할 수 없습니다.</b><br>
+      퇴실·해지 시 <b>관리사무소에 직접 문의</b>해 주세요.
+    </div>
+    <button class="btn-modal-ok" onclick="closeModal()">확인</button>
+  </div>
+</div>
+
+<div class="header">
+  <h1>📚 제일풍경채더숲 독서실</h1>
+  <div class="sub">3개월 정기권 좌석 등록 명부</div>
+  <div class="period-badge"><span class="label">현재 분기</span><span id="periodDisplay">-</span></div>
+</div>
+
+<!-- 페이지 전환 내비게이션 -->
+<div class="nav-bar">
+  <a class="nav-btn current" href="/fix.html">🪑 정기권 좌석</a>
+  <a class="nav-btn other" href="/">🎫 1회 입장권</a>
+</div>
+
+<div class="notice">
+  <strong>⚠ 이용 전 필수 확인</strong>
+  <b>3개월 정기권 구매 후 관리사무소에서 발급받은 코드(8자리)</b>가 있어야 등록 가능합니다.<br>
+  등록 삭제는 이용자가 직접 불가하며, <b>관리사무소에 문의</b>하셔야 합니다.
+</div>
+
+<!-- 좌석 현황 -->
+<div class="card">
+  <div class="card-head">
+    <h2>🪑 좌석 현황</h2>
+    <div class="count-wrap">
+      <div class="count-text" id="countText">0 / 29명</div>
+      <div class="count-bar"><div class="count-fill" id="countFill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="seat-grid" id="seatGrid"></div>
+    <div class="seat-legend">
+      <span><span class="ldot" style="background:#68d391"></span>이용 가능</span>
+      <span><span class="ldot" style="background:#fc8181"></span>이용 중</span>
+    </div>
+  </div>
+</div>
+
+<!-- 등록 명부 -->
+<div class="card">
+  <div class="card-head"><h2>📋 현재 등록 명부</h2></div>
+  <div class="card-body">
+    <div id="rosterList"><div class="roster-empty">등록된 이용자가 없습니다.</div></div>
+  </div>
+</div>
+
+<!-- 등록 폼 -->
+<div class="card">
+  <div class="card-head"><h2>✏️ 좌석 등록</h2></div>
+  <div class="card-body">
+    <div id="statusBanner" class="status-banner s-open">✅ 등록 가능 — 관리사무소에서 코드를 받은 후 등록해 주세요</div>
+    <div class="form-group">
+      <label class="form-label" for="iName">이름</label>
+      <input class="form-input" type="text" id="iName" placeholder="예: 홍길동" maxlength="10" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="iCode">
+        등록 코드 <span style="color:var(--gray);font-weight:400">(관리사무소 발급 · 8자리)</span>
+      </label>
+      <input class="form-input code-input" type="text" id="iCode"
+             placeholder="XXXX-XXXX" maxlength="9" autocomplete="off">
+      <div class="code-hint">대소문자 구분 없음 · 중간 하이픈(-)은 있어도 없어도 됩니다</div>
+    </div>
+    <button class="btn-reg" id="btnReg" onclick="register()">등록하기</button>
+    <div id="regFailMsg" style="font-size:.78rem;font-weight:700;min-height:18px;margin-top:8px;text-align:center"></div>
+  </div>
+</div>
+
+<div class="footer">
+  ※ 무인 운영 시설입니다. 이용 수칙을 반드시 준수해 주세요.<br>
+  <a href="/rules.html" style="display:inline-block;margin-top:10px;background:linear-gradient(135deg,#1a2e5a,#2c5282);color:#fff;text-decoration:none;border-radius:20px;padding:8px 22px;font-size:.78rem;font-weight:700;box-shadow:0 2px 8px rgba(44,82,130,.3)">📋 독서실 이용수칙 보기</a><br><br>
+  문의: 제일풍경채더숲 관리사무소
+</div>
+
+<script>
+const API = '/api';
+let currentData = { period: '', seats: [] };
+
+function getPeriodDisplay(period) {
+  if (!period) return '-';
+  const [y, m] = period.split('-').map(Number);
+  const endM = m + 2;
+  if (endM <= 12) return `${y}년 ${m}월 ~ ${endM}월`;
+  return `${y}년 ${m}월 ~ ${y+1}년 ${endM-12}월`;
+}
+
+function fmtRegDate(t) {
+  if (!t) return '';
+  const date = t.split(' ')[0];
+  if (!date) return t;
+  const [,mm,dd] = date.split('-');
+  return `${+mm}/${+dd} 등록`;
+}
+
+function render(data) {
+  currentData = data;
+  const seats = data.seats || [];
+  const count = seats.length;
+  const full  = count >= 29;
+
+  document.getElementById('periodDisplay').textContent = getPeriodDisplay(data.period);
+  document.getElementById('countText').textContent  = `${count} / 29명`;
+  document.getElementById('countFill').style.width  = `${count/29*100}%`;
+
+  // 29좌석 그리드
+  const grid = document.getElementById('seatGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 29; i++) {
+    const s  = seats[i];
+    const el = document.createElement('div');
+    el.className = 'seat-dot ' + (s ? 'taken' : 'avail');
+    el.innerHTML = s
+      ? `<span style="font-size:.95rem">🧑‍💻</span>`
+      : `<span style="font-size:1rem">💺</span>`;
+    el.title = s ? s.name : '빈자리';
+    grid.appendChild(el);
+  }
+
+  // 명부
+  const list = document.getElementById('rosterList');
+  list.innerHTML = seats.length === 0
+    ? '<div class="roster-empty">등록된 이용자가 없습니다.</div>'
+    : seats.map((s, i) => `
+      <div class="roster-item">
+        <div class="rnum">${i+1}</div>
+        <div class="rinfo"><div class="rname">${esc(s.name)}</div></div>
+        <div class="rdate">${fmtRegDate(s.time)}</div>
+        <span class="admin-only-badge">관리사무소 삭제</span>
+      </div>`).join('');
+
+  const banner = document.getElementById('statusBanner');
+  const btn    = document.getElementById('btnReg');
+  if (full) {
+    banner.className  = 'status-banner s-full';
+    banner.textContent = '🚫 이번 분기 정원(29명)이 마감되었습니다.';
+    btn.disabled = true;
+  } else {
+    banner.className  = 'status-banner s-open';
+    banner.textContent = `✅ 등록 가능 (${29-count}석 남음) — 관리사무소에서 코드를 받은 후 등록해 주세요`;
+    btn.disabled = isRegLocked();
+  }
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── 브루트포스 방어 (클라이언트) ─────────────────────────
+const REG_MAX_FAIL = 5;
+const REG_LOCK_MS  = 60 * 1000;
+let regFailCount   = 0;
+let regLockedUntil = null;
+
+function isRegLocked() {
+  if (regLockedUntil && Date.now() < regLockedUntil) return true;
+  if (regLockedUntil && Date.now() >= regLockedUntil) {
+    regLockedUntil = null; regFailCount = 0; updateRegBtn();
+  }
+  return false;
+}
+
+function updateRegBtn() {
+  const btn = document.getElementById('btnReg');
+  const msg = document.getElementById('regFailMsg');
+  if (isRegLocked()) {
+    const remain = Math.ceil((regLockedUntil - Date.now()) / 1000);
+    btn.disabled    = true;
+    btn.textContent = `🔒 잠금 (${remain}초)`;
+    if (msg) msg.style.color = 'var(--red)';
+  } else {
+    const count = currentData?.seats?.length || 0;
+    btn.disabled    = count >= 29;
+    btn.textContent = '등록하기';
+    if (msg) msg.textContent = '';
+  }
+}
+
+let regLockTimer = null;
+function startRegLockTimer() {
+  clearInterval(regLockTimer);
+  regLockTimer = setInterval(() => {
+    if (!regLockedUntil || Date.now() >= regLockedUntil) {
+      clearInterval(regLockTimer); updateRegBtn();
+    } else { updateRegBtn(); }
+  }, 1000);
+}
+
+function showRegMsg(msg, type) {
+  const el = document.getElementById('regFailMsg');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = type === 'error' ? 'var(--red)' : 'var(--green)';
+}
+
+// ── 등록 ─────────────────────────────────────────────────
+async function register() {
+  if (isRegLocked()) {
+    showRegMsg(`🔒 ${Math.ceil((regLockedUntil - Date.now())/1000)}초 후에 다시 시도해 주세요.`, 'error');
+    return;
+  }
+  const name = document.getElementById('iName').value.trim();
+  const rawCode = document.getElementById('iCode').value.trim();
+  const code = rawCode.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+
+  if (!name) { showRegMsg('이름을 입력해 주세요.', 'error'); return; }
+  if (!rawCode) { showRegMsg('관리사무소에서 받은 코드를 입력해 주세요.', 'error'); return; }
+  if (code.length !== 8) { showRegMsg('코드는 8자리입니다. (하이픈 제외)', 'error'); return; }
+
+  loading(true, '등록 중...');
+  try {
+    const res = await call('registerFixed', { name, code });
+    regFailCount = 0; regLockedUntil = null; clearInterval(regLockTimer);
+    document.getElementById('iName').value = '';
+    document.getElementById('iCode').value = '';
+    showRegMsg('', '');
+    render(res.seats);
+    loading(false);
+    document.getElementById('regDoneName').textContent = name;
+    document.getElementById('regDoneTime').textContent = '등록 완료 · ' + new Date().toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('modalRegDone').classList.remove('hidden');
+  } catch(e) {
+    loading(false);
+    if (e.message.includes('유효하지 않은 코드')) {
+      regFailCount += 1;
+      const left = REG_MAX_FAIL - regFailCount;
+      if (left <= 0) {
+        regLockedUntil = Date.now() + REG_LOCK_MS;
+        regFailCount   = 0;
+        updateRegBtn(); startRegLockTimer();
+        showRegMsg('🔒 5회 오류. 1분간 잠금됩니다.', 'error');
+      } else {
+        showRegMsg(`유효하지 않은 코드입니다. (${left}회 남음)`, 'error');
+      }
+      document.getElementById('iCode').value = '';
+    } else {
+      showRegMsg(e.message, 'error');
+    }
+  }
+}
+
+function closeModal() {
+  document.getElementById('modalRegDone').classList.add('hidden');
+}
+
+async function call(action, body={}) {
+  const res = await fetch(`${API}?action=${action}`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || '서버 오류');
+  return json;
+}
+
+async function loadSeats() {
+  const res = await fetch(`${API}?action=getFixedSeats`);
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || '로딩 실패');
+  return json;
+}
+
+function loading(on, msg='') {
+  document.getElementById('loading').style.display = on ? 'flex' : 'none';
+  if (msg) document.getElementById('ltext').textContent = msg;
+}
+
+let tt;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast ' + type;
+  requestAnimationFrame(() => el.classList.add('show'));
+  clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 3400);
+}
+
+// 코드 입력 자동 하이픈 처리
+document.getElementById('iCode').addEventListener('input', function() {
+  let v = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
+  if (v.length > 4) v = v.slice(0,4) + '-' + v.slice(4);
+  this.value = v;
+});
+
+document.getElementById('iName').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('iCode').focus();
+});
+document.getElementById('iCode').addEventListener('keydown', e => {
+  if (e.key === 'Enter') register();
+});
+
+setInterval(async () => {
+  try { render(await loadSeats()); } catch(_) {}
+}, 30000);
+
+(async () => {
+  try {
+    render(await loadSeats());
+    loading(false);
+  } catch(e) {
+    loading(false);
+    toast('데이터 로딩 실패. 새로고침 해주세요.', 'error');
+  }
+})();
+</script>
+</body>
+</html>
