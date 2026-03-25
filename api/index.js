@@ -156,7 +156,7 @@ export default async function handler(req, res) {
 
   try {
 
-    // ── 1. 좌석 현황 조회 ────────────────────────────────
+    // ── 1. 좌석 현황 조회 (이용자용 — memo 미포함) ──────────
     if (action === 'getSeats') {
       const { data, sha } = await ghGet('seats.json');
       const fresh = resetIfNewDay(data);
@@ -168,6 +168,23 @@ export default async function handler(req, res) {
         seats: fresh.seats.map(({ name, time }) => ({ name, time })),
       };
       return ok(safeSeats);
+    }
+
+    // ── 1-2. 좌석 현황 조회 (관리자용 — memo 포함) ──────────
+    if (action === 'adminGetSeats') {
+      const { adminPassword: pw } = body;
+      if (pw !== ADMIN_PASS) return err('관리자 인증 실패', 401);
+      const { data, sha } = await ghGet('seats.json');
+      const fresh = resetIfNewDay(data);
+      if (fresh.date !== data.date) {
+        await ghPut('seats.json', fresh, sha, `auto-reset ${fresh.date}`);
+      }
+      // exitCode 제외, memo 포함
+      const adminSeats = {
+        ...fresh,
+        seats: fresh.seats.map(({ name, time, memo }) => ({ name, time, memo: memo || '' })),
+      };
+      return ok(adminSeats);
     }
 
     // ── 2. 명부 등록 ─────────────────────────────────────
@@ -184,7 +201,7 @@ export default async function handler(req, res) {
       if (fresh.seats.length >= 5) return err('오늘 정원(5명)이 마감되었습니다.');
 
       const exitCode = genExitCode();
-      fresh.seats.push({ name, time: timeKST(), exitCode });
+      fresh.seats.push({ name, time: timeKST(), exitCode, memo: codeEntry.memo || '' });
       await ghPut('seats.json', fresh, seatSha, `register ${name} ${fresh.date}`);
 
       codeData.codes = codeData.codes.filter(c => c.code !== code.toUpperCase());
