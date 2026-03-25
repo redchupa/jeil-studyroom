@@ -209,7 +209,9 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
 </div>
 
 <script>
-const API = '/api';
+const API = location.hostname.endsWith('netlify.app')
+  ? 'https://jeil-studyroom.vercel.app/api'
+  : '/api';
 let currentData = { period: '', seats: [] };
 
 function getPeriodDisplay(period) {
@@ -255,7 +257,8 @@ function render(data) {
   const count = seats.length;
   const full  = count >= 29;
 
-  document.getElementById('periodDisplay').textContent = getPeriodDisplay(data.period);
+  const periodDisplayEl = document.getElementById('periodDisplay');
+  if (periodDisplayEl) periodDisplayEl.textContent = getPeriodDisplay(data.period);
   document.getElementById('countText').textContent  = `${count} / 29명`;
   document.getElementById('countFill').style.width  = `${count/29*100}%`;
 
