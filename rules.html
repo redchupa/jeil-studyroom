@@ -18,46 +18,49 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg);min-height:100vh;padding-bottom:48px}
 
-/* Header */
 .header{background:linear-gradient(135deg,var(--blue-dark),var(--blue-mid));color:#fff;padding:20px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 .btn-back{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 14px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;text-decoration:none}
 .header-title{flex:1;text-align:center}
 .header-title h1{font-size:1.05rem;font-weight:700}
 .header-title p{font-size:.72rem;opacity:.8;margin-top:2px}
 
-/* Card */
 .card{background:#fff;border-radius:14px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden}
 .card-head{background:var(--blue-dark);color:#fff;padding:12px 18px}
 .card-head h2{font-size:.95rem;font-weight:700}
 .card-body{padding:16px}
 
-/* Section title */
 .sec-title{font-size:.82rem;font-weight:700;color:var(--blue-dark);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+.sec-title + .sec-title{margin-top:16px}
 
-/* Rule items */
 .rule-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:.82rem;line-height:1.6;color:#2d3748}
 .rule-item:last-child{border-bottom:none}
 .rule-bullet{flex-shrink:0;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--blue-mid)}
 
-/* Fee table */
 .fee-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:4px}
 .fee-table th{background:var(--blue-dark);color:#fff;padding:8px 10px;text-align:center;font-weight:700}
 .fee-table td{padding:8px 10px;border:1px solid var(--border);text-align:center}
 .fee-table tr:nth-child(even) td{background:#f7fafc}
 
-/* Notice box */
 .notice-box{background:#fffbeb;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 14px;margin:12px 0;font-size:.78rem;color:#744210;line-height:1.65}
 .notice-box strong{display:block;margin-bottom:3px;font-weight:700}
-
-/* Warning box */
 .warn-box{background:#fff5f5;border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:11px 14px;margin:12px 0;font-size:.78rem;color:#742020;line-height:1.65}
 .warn-box strong{display:block;margin-bottom:3px;font-weight:700}
 
-/* Steps */
 .steps{padding:4px 0}
 .step{display:flex;gap:10px;padding:8px 0;font-size:.82rem;line-height:1.55;color:#2d3748;border-bottom:1px solid #f0f0f0}
 .step:last-child{border-bottom:none}
 .step-num{width:22px;height:22px;background:var(--blue-mid);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-num.green{background:var(--green)}
+
+/* 이용권 비교 뱃지 */
+.badge-row{display:flex;gap:8px;margin-bottom:14px}
+.badge{flex:1;border-radius:10px;padding:10px 10px 12px;text-align:center;border:2px solid}
+.badge.oneday{background:#f0fff4;border-color:#9ae6b4}
+.badge.fixed{background:#ebf8ff;border-color:#90cdf4}
+.badge .badge-title{font-size:.78rem;font-weight:800;margin-bottom:4px}
+.badge.oneday .badge-title{color:var(--green)}
+.badge.fixed .badge-title{color:var(--blue-mid)}
+.badge .badge-sub{font-size:.68rem;color:var(--gray);line-height:1.5}
 
 .footer{text-align:center;color:var(--gray);font-size:.68rem;padding:8px 16px;line-height:1.8}
 .updated{text-align:right;font-size:.68rem;color:var(--gray);padding:0 16px 4px}
@@ -115,6 +118,28 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
   </div>
 </div>
 
+<!-- 이용권 종류별 온라인 명부 안내 -->
+<div class="card">
+  <div class="card-head"><h2>온라인 출입 명부 안내</h2></div>
+  <div class="card-body">
+    <div class="badge-row">
+      <div class="badge oneday">
+        <div class="badge-title">🎫 1회 입장권</div>
+        <div class="badge-sub">하루 최대 5명<br>매일 자정 자동 초기화<br>이용자 직접 퇴실 삭제</div>
+      </div>
+      <div class="badge fixed">
+        <div class="badge-title">🪑 3개월 정기권</div>
+        <div class="badge-sub">분기 최대 29명<br>3/6/9/12월 초기화<br>관리사무소 삭제 처리</div>
+      </div>
+    </div>
+    <div class="notice-box" style="margin-top:0">
+      <strong>공통 사항</strong>
+      두 이용권 모두 관리사무소에서 발급받은 <b>등록 코드</b>가 있어야 명부 등록 가능합니다.<br>
+      온라인 명부 미등록 시 입실 불가이며, 반복 시 이용이 제한될 수 있습니다.
+    </div>
+  </div>
+</div>
+
 <!-- 1회 입장권 이용 절차 -->
 <div class="card">
   <div class="card-head"><h2>1회 입장권 이용 절차</h2></div>
@@ -126,8 +151,8 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
     </div>
     <div class="steps">
       <div class="step"><div class="step-num">1</div><span>관리사무소에 <b>1회 입장권(종이) 제출</b></span></div>
-      <div class="step"><div class="step-num">2</div><span>담당자가 <b>독서실 문 개방</b> + <b>입장 코드 발급</b></span></div>
-      <div class="step"><div class="step-num">3</div><span>온라인 출입 명부(웹페이지)에서 <b>이름 + 코드 입력 후 등록</b></span></div>
+      <div class="step"><div class="step-num">2</div><span>담당자가 <b>독서실 문 개방</b> + <b>입장 코드(4자리) 발급</b></span></div>
+      <div class="step"><div class="step-num">3</div><span>온라인 출입 명부(1회 입장권 페이지)에서 <b>이름 + 코드 입력 후 등록</b></span></div>
       <div class="step"><div class="step-num">4</div><span>등록 완료 시 <b>퇴실코드(숫자 4자리) 발급</b> — 반드시 메모!</span></div>
       <div class="step"><div class="step-num">5</div><span>독서실 이용</span></div>
       <div class="step"><div class="step-num">6</div><span>퇴실 시 온라인 명부에서 <b>퇴실코드 입력 후 본인 항목 삭제</b></span></div>
@@ -137,6 +162,30 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
       퇴실코드는 등록 완료 시 <b>단 1회만 표시</b>됩니다.<br>
       화면에서 즉시 메모하거나 캡처해 두세요.<br>
       코드를 분실하면 퇴실 처리가 불가합니다. (관리사무소 문의)
+    </div>
+  </div>
+</div>
+
+<!-- 3개월 정기권 이용 절차 -->
+<div class="card">
+  <div class="card-head"><h2>3개월 정기권 좌석 등록 절차</h2></div>
+  <div class="card-body">
+    <div class="notice-box">
+      <strong>분기 최대 29명 제한 · 선착순</strong>
+      온라인 명부에 29명이 등록된 경우 해당 분기 추가 등록 불가합니다.<br>
+      명부는 <b>3·6·9·12월 1일 새벽 06:00</b>에 자동 초기화됩니다.
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num green">1</div><span>관리사무소에 <b>3개월 정기권 구매 및 발급</b> 요청</span></div>
+      <div class="step"><div class="step-num green">2</div><span>담당자가 <b>등록 코드(8자리) 발급</b></span></div>
+      <div class="step"><div class="step-num green">3</div><span>온라인 출입 명부(정기권 좌석 페이지)에서 <b>이름 + 8자리 코드 입력 후 등록</b></span></div>
+      <div class="step"><div class="step-num green">4</div><span>등록 완료 — 해당 분기 동안 독서실 이용</span></div>
+      <div class="step"><div class="step-num green">5</div><span>분기 종료 또는 해지 시 <b>관리사무소에 직접 문의</b>하여 삭제 처리</span></div>
+    </div>
+    <div class="warn-box">
+      <strong>정기권 삭제 안내</strong>
+      정기권 좌석은 <b>이용자가 직접 삭제할 수 없습니다.</b><br>
+      조기 해지·퇴실 처리가 필요한 경우 반드시 <b>관리사무소에 문의</b>하세요.
     </div>
   </div>
 </div>
