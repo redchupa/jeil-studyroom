@@ -26,6 +26,16 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
 .period-badge{display:inline-block;background:rgba(255,255,255,.18);border-radius:20px;padding:5px 18px;font-size:.82rem;font-weight:600}
 .period-badge .label{opacity:.75;margin-right:4px}
 
+/* 분기 그리드 */
+.quarter-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.quarter-item{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);border-radius:9px;padding:8px 11px;text-align:left}
+.quarter-item.active{background:rgba(201,162,39,.28);border-color:var(--gold)}
+.q-label{display:block;font-size:.78rem;font-weight:800;color:rgba(255,255,255,.65);margin-bottom:2px}
+.quarter-item.active .q-label{color:var(--gold)}
+.q-range{display:block;font-size:.6rem;color:rgba(255,255,255,.55);line-height:1.5}
+.quarter-item.active .q-range{color:rgba(255,255,255,.9);font-weight:600}
+.q-now{display:inline-block;background:var(--gold);color:#1a2e5a;font-size:.52rem;font-weight:800;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:middle;letter-spacing:.3px}
+
 .nav-bar{display:flex;gap:0;margin:14px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .nav-btn{flex:1;padding:11px;font-size:.82rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .2s}
 .nav-btn.current{background:var(--blue-dark);color:#fff}
@@ -129,7 +139,7 @@ body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:var(--bg)
 <div class="header">
   <h1>📚 제일풍경채더숲 독서실</h1>
   <div class="sub">3개월 정기권 좌석 등록 명부</div>
-  <div class="period-badge"><span class="label">현재 분기</span><span id="periodDisplay">-</span></div>
+  <div class="quarter-grid" id="quarterGrid"></div>
 </div>
 
 <!-- 페이지 전환 내비게이션 -->
@@ -208,6 +218,27 @@ function getPeriodDisplay(period) {
   const endM = m + 2;
   if (endM <= 12) return `${y}년 ${m}월 ~ ${endM}월`;
   return `${y}년 ${m}월 ~ ${y+1}년 ${endM-12}월`;
+}
+
+function renderQuarterGrid() {
+  const quarters = [
+    { label: '1분기', range: '1월 1일 09:00\n~ 3월 31일 24:00', months: [1,2,3] },
+    { label: '2분기', range: '4월 1일 09:00\n~ 6월 30일 24:00', months: [4,5,6] },
+    { label: '3분기', range: '7월 1일 09:00\n~ 9월 30일 24:00', months: [7,8,9] },
+    { label: '4분기', range: '10월 1일 09:00\n~ 12월 31일 24:00', months: [10,11,12] },
+  ];
+  const month = new Date().getMonth() + 1;
+  const el = document.getElementById('quarterGrid');
+  if (!el) return;
+  el.innerHTML = quarters.map(q => {
+    const active = q.months.includes(month);
+    const nowBadge = active ? '<span class="q-now">현재</span>' : '';
+    const rangeLines = q.range.split('\n');
+    return `<div class="quarter-item${active ? ' active' : ''}">
+      <span class="q-label">${q.label}${nowBadge}</span>
+      <span class="q-range">${rangeLines[0]}<br>${rangeLines[1]}</span>
+    </div>`;
+  }).join('');
 }
 
 function fmtRegDate(t) {
@@ -416,6 +447,7 @@ setInterval(async () => {
 }, 30000);
 
 (async () => {
+  renderQuarterGrid();
   try {
     render(await loadSeats());
     loading(false);
