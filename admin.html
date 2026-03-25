@@ -208,7 +208,11 @@ async function loadAll() {
 }
 
 async function fetchSeats() {
-  const res = await fetch(`${API}?action=getSeats`);
+  const res = await fetch(`${API}?action=adminGetSeats`, {
+    method : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body   : JSON.stringify({ adminPassword: adminPw }),
+  });
   const json = await res.json();
   if (!res.ok) throw new Error(json.error || '좌석 로딩 실패');
   return json;
@@ -311,6 +315,7 @@ function renderSeats() {
       <div class="seat-num">${i+1}</div>
       <div class="seat-info">
         <div class="seat-name">${esc(s.name)}</div>
+        ${s.memo ? `<div class="seat-detail">${esc(s.memo)}</div>` : ''}
       </div>
       <div class="seat-time">${s.time||''}</div>
       <button class="btn-force-del" onclick="forceDelete(${i})">강제 퇴실</button>
